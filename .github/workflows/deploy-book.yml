@@ -37,6 +37,8 @@ jobs:
 
       - name: Build HTML
         shell: bash -l {0}
+        env:
+          BASE_URL: /${{ github.event.repository.name }}
         run: myst build --html --execute
 
       - name: Upload artifact
