@@ -1,0 +1,11 @@
+version: 1
+project:
+  title: PHIRE
+  github: https://github.com/jkingslake/PHIRE
+  toc:
+    - file: index.md
+    - title: Preliminary planning
+      children:
+        - file: preliminary-planning/mapping-henry-ice-rise.ipynb
+site:
+  template: book-theme

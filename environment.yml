@@ -1,0 +1,23 @@
+name: phire
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - jupyter
+  - ipykernel
+  - nbclient
+  - nbformat
+  - jupyter-cache
+  - numpy
+  - pandas
+  - xarray
+  - rioxarray
+  - rasterio
+  - geopandas
+  - shapely
+  - pyproj
+  - matplotlib
+  - cartopy
+  - pip
+  - pip:
+      - pdemtools
