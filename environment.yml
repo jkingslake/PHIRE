@@ -18,6 +18,4 @@ dependencies:
   - pyproj
   - matplotlib
   - cartopy
-  - pip
-  - pip:
-      - pdemtools
+  - pdemtools
