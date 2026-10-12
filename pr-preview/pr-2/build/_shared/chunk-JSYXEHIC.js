@@ -1,1 +1,0 @@
-import{b as t}from"/PHIRE/pr-preview/pr-2/build/_shared/chunk-DYFJVR7X.js";var s=class{constructor(i){this.init=i,this.records=this.init()}static{t(this,"ImperativeState")}reset(){this.records=this.init()}};export{s as a};
