@@ -16,4 +16,7 @@
   <url>
     <loc>http://localhost:3000/borehole-heat-diffusion</loc>
   </url>
+  <url>
+    <loc>http://localhost:3000/vertical-temperature-after-grounding</loc>
+  </url>
 </urlset>
