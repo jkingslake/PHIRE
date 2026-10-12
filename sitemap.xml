@@ -7,4 +7,10 @@
   <url>
     <loc>http://localhost:3000/mapping-henry-ice-rise</loc>
   </url>
+  <url>
+    <loc>http://localhost:3000/hir-radargram-plotting</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/gannt-1</loc>
+  </url>
 </urlset>
