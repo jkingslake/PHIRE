@@ -10,5 +10,6 @@ project:
         - file: preliminary-planning/HIR_radargram_plotting.ipynb
         - file: preliminary-planning/gannt_1.ipynb
         - file: preliminary-planning/borehole-heat-diffusion.ipynb
+        - file: preliminary-planning/vertical-temperature-after-grounding.ipynb
 site:
   template: book-theme
