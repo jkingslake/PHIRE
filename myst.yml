@@ -9,5 +9,6 @@ project:
         - file: preliminary-planning/mapping-henry-ice-rise.ipynb
         - file: preliminary-planning/HIR_radargram_plotting.ipynb
         - file: preliminary-planning/gannt_1.ipynb
+        - file: preliminary-planning/borehole-heat-diffusion.ipynb
 site:
   template: book-theme
