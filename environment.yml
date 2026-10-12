@@ -19,3 +19,10 @@ dependencies:
   - matplotlib
   - cartopy
   - pdemtools
+  - ipyleaflet
+  - polartoolkit
+  - plotly
+  - python-kaleido
+  - pip
+  - pip:
+      - segyio  # not on conda-forge

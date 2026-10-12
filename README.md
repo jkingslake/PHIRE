@@ -15,8 +15,10 @@ To build it locally:
 conda env create -f environment.yml
 conda activate phire
 npm install -g mystmd
-myst build --html --execute
+myst build --html
 ```
 
 Then open `_build/html/index.html`, or run `myst start` for a live-reloading dev server.
+
+**Notebooks are not re-run in CI.** They read local data (Quantarctica, DELORES radar files, WorldView imagery) that isn't in the repo, so the site shows the outputs saved in each `.ipynb`. Re-run a notebook locally and commit it to update what the site shows.
 

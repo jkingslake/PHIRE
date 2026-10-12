@@ -37,7 +37,7 @@ jobs:
         shell: bash -l {0}
         env:
           BASE_URL: /${{ github.event.repository.name }}
-        run: myst build --html --execute
+        run: myst build --html
 
       - name: Disable Jekyll processing
         run: touch _build/html/.nojekyll
