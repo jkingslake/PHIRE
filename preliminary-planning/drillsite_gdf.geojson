@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "drillsite_gdf",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3031" } },
+"features": [
+{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-955191.470790000050329,545987.856197000015527]}}
+]
+}

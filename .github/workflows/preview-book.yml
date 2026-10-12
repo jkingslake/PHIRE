@@ -42,7 +42,7 @@ jobs:
         shell: bash -l {0}
         env:
           BASE_URL: /${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.number }}
-        run: myst build --html --execute
+        run: myst build --html
 
       - name: Disable Jekyll processing
         if: github.event.action != 'closed'

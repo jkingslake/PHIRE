@@ -18,6 +18,11 @@ dependencies:
   - pyproj
   - matplotlib
   - cartopy
+  - pdemtools
+  - ipyleaflet
+  - polartoolkit
+  - plotly
+  - python-kaleido
   - pip
   - pip:
-      - pdemtools
+      - segyio  # not on conda-forge

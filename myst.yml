@@ -7,5 +7,7 @@ project:
     - title: Preliminary planning
       children:
         - file: preliminary-planning/mapping-henry-ice-rise.ipynb
+        - file: preliminary-planning/HIR_radargram_plotting.ipynb
+        - file: preliminary-planning/gannt_1.ipynb
 site:
   template: book-theme
