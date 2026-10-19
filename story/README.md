@@ -73,7 +73,7 @@ What each asset holds:
 | `speed_weddell.webp` | MEaSUREs ice speed, 10 to 800 m/yr |
 | `radar_tracks.json` | every DELORES line on Henry Ice Rise in both seasons, in the order driven (times from each line's `EVENTS.CSV`) |
 | `rg_ridge*.webp` | the line north-west along the ridge on 9 Jan 2014, the last day of season 1, which ended in the corner where the features first showed up (ReflexW export, unmigrated, re-hung from a smoothed GPS surface) |
-| `rg_fl5*.webp` | HEnorth FL5 (30 Dec 2014, migrated), the line through the drill site, as in `HIR_radargram_plotting.ipynb`; `radargrams.json` also holds the bed at the drill site (410 m below sea level, 541 m below the surface) |
+| `rg_fl5*.webp` | HEnorth FL5 (30 Dec 2014, migrated), the line through the drill site, as in `HIR_radargram_plotting.ipynb`; `radargrams.json` also holds the bed at the drill site (410 m below sea level; 541 m below the surface with no firn correction, quoted as about 550 m) |
 | `vectors.json` | grounding line, labels, drill site, where crevasses begin along each line, surface-texture lines |
 | `pism.json` | grounded-ice outlines every 200 years from 20 ka, PISM reference run 2205 |
 | `temperature.json` | profiles after grounding from `vertical-temperature-after-grounding.ipynb` |

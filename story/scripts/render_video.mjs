@@ -46,10 +46,12 @@ function serve() {
 
 const server = await serve();
 const port = server.address().port;
+// --gpu uses the machine's GPU for the 3-D frames (much faster); the default software renderer works anywhere
+const GL = args.gpu ? ["--use-angle=metal", "--enable-gpu"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
 const browser = await chromium.launch({
   channel: "chrome",
   headless: true,
-  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--force-color-profile=srgb", "--hide-scrollbars"],
+  args: [...GL, "--ignore-gpu-blocklist", "--force-color-profile=srgb", "--hide-scrollbars"],
 });
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE });
 page.on("console", (m) => m.type() === "error" && console.error("page:", m.text()));

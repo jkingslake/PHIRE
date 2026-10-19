@@ -339,11 +339,17 @@ class Story {
       const i = beats.findIndex((b) => b.dur > 0 && t >= B[b.id].t0 && t < B[b.id].t0 + b.dur);
       const b = beats[i >= 0 ? i : beats.length - 1];
       const bt = B[b.id];
+      let text = b.caption, slot = i % 2;
       let a = win(t, bt.t0 + 0.05, bt.t0 + 0.45, bt.t0 + bt.dur - 0.3, bt.t0 + bt.dur);
+      if (b.caption2) {
+        const ts = at(b.id, b.split ?? 0.6);
+        if (t < ts) a = win(t, bt.t0 + 0.05, bt.t0 + 0.45, ts - 0.35, ts);
+        else [text, slot, a] = [b.caption2, 1 - slot, win(t, ts, ts + 0.4, bt.t0 + bt.dur - 0.3, bt.t0 + bt.dur)];
+      }
       if (b.id === "intro") a = win(t, at("intro", 0.55), at("intro", 0.66), at("intro", 1) - 0.3, at("intro", 1));
       if (b.id === "end") a = win(t, at("end", 0.0), at("end", 0.1), at("end", 0.45), at("end", 0.55));
       if (b.id === "end" && t >= T_END) a = 0;
-      S.caption = { text: b.caption, alpha: b.caption ? a : 0, slot: i % 2 };
+      S.caption = { text, alpha: text ? a : 0, slot };
     }
     return S;
   }
