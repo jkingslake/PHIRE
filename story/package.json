@@ -1,0 +1,14 @@
+{
+  "name": "phire-story",
+  "private": true,
+  "description": "Scroll story and short video about the buried crevasses of Henry Ice Rise",
+  "type": "module",
+  "scripts": {
+    "serve": "python3 -m http.server 8765",
+    "video": "node scripts/render_video.mjs"
+  },
+  "devDependencies": {
+    "ffmpeg-static": "5.2.0",
+    "playwright-core": "1.48.2"
+  }
+}

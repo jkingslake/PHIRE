@@ -185,3 +185,7 @@ cython_debug/
 # macOS / editor
 .DS_Store
 .vscode/
+
+# scroll story: npm packages and rendered videos (rebuild with `npm run video` in story/)
+story/node_modules/
+story/video/
