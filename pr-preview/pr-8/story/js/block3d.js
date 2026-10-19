@@ -6,6 +6,10 @@ import { clamp, lerp, easeInOut } from "./util.js";
 import { COLORS } from "./map.js";
 
 const VE = 3; // vertical exaggeration
+// Ice thickness quoted at the drill site. The radar gives 541 m (bed 410 m below sea level), with no correction for the
+// faster radio waves in the firn, which would add some metres; the story uses the rounder 550 m. The depth counter
+// reads this value when the hole reaches the radar bed.
+const QUOTED_THICKNESS_M = 550;
 
 export class Block3D {
   constructor(canvas, labelRoot, data) {
@@ -233,7 +237,10 @@ export class Block3D {
       const a = l.a(st) * st.alpha * (p.z < 1 ? 1 : 0);
       l.e.style.opacity = a;
       l.e.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)${l.right ? " translateX(-100%)" : ""}`;
-      if (l.depth) l.e.textContent = st.drill >= 0.999 ? `${Math.round(depthM)} m · bed` : `${Math.round(depthM)} m`;
+      if (l.depth) {
+        const shown = Math.round(QUOTED_THICKNESS_M * clamp(st.drill));
+        l.e.textContent = st.drill >= 0.999 ? `${shown} m · bed` : `${shown} m`;
+      }
     }
   }
 }

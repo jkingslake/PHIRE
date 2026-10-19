@@ -3,6 +3,7 @@
 //   id       used by main.js to attach visuals to the beat
 //   dur      seconds in the video (and the relative scroll length in the article)
 //   caption  the on-screen line in the video; keep it short enough to read in `dur`
+//   caption2 optional second line, shown from `split` (a fraction of the beat) to the end
 //   html     the article text for the beat
 //   video    false to leave the beat out of the video (it stays in the article)
 //
@@ -90,9 +91,9 @@ const FULL = [
   {
     id: "fl5",
     dur: 6.5,
-    caption: "Steep cracks, about 450 m apart, rising from the bed and capped by a smooth layer.",
+    caption: "Steep reflectors that look like cracks, rising from the bed and capped by a smooth layer.",
     html: `<p>Processed to put each echo back where it came from, line FL5 (driven on 30 December) shows them clearly:
-      steep reflectors that rise from the bed and stop beneath a smooth layer. Their mean spacing is about 450&nbsp;m.</p>`,
+      steep reflectors that look like cracks, rising from the bed and stopping beneath a smooth layer.</p>`,
   },
   {
     id: "pattern",
@@ -156,19 +157,23 @@ const FULL = [
   {
     id: "block",
     dur: 12,
-    caption: "A hot-water drill will melt a hole through 540 m of ice to the bed, straight through the buried crevasses.",
-    html: `<p>In the 2028/29 season a hot-water drill will melt a hole through the full 540&nbsp;m of ice to the bed,
+    caption: "A hot-water drill will melt a hole through 550 m of ice to the bed, straight through the buried crevasses.",
+    caption2: "At the bed, a corer will sample the sediment beneath the ice.",
+    split: 0.72,
+    html: `<p>In the 2028/29 season a hot-water drill will melt a hole through the full 550&nbsp;m of ice to the bed,
       passing through the buried crevasses about 450&nbsp;m down.</p>
       <p>A camera lowered into the hole will look for the blue streaks of refrozen sea water in its walls, and a corer
-      will sample the sediment beneath, which would hold marine microfossils if the ocean was once there.</p>`,
+      will sample the sediment beneath, which would hold marine microfossils if the ocean was once there. Radiocarbon
+      dating of that sediment will tell us when the ocean was last there.</p>`,
   },
   {
     id: "temperature",
     dur: 6.5,
-    caption: "Frozen sea water in the cracks would show it was afloat. The ice's temperature will show when.",
+    caption: "Frozen sea water in the cracks would show it was afloat. The ice's temperature and the sediment will show when.",
     html: `<p>A fibre-optic cable left in the hole will measure the temperature of the ice from top to bottom. When floating
       ice runs aground, the ocean stops warming its base and the ice cools from the bottom up, over thousands of years.
-      The profile measured today still carries the signature of when that happened.</p>
+      The profile measured today still carries the signature of when that happened. With the sediment beneath, it will
+      tell us when the ice rise ran aground.</p>
       <p>The curves are from our model of a 500&nbsp;m column of ice
       <span class="key temp">after grounding</span>, with placeholder values for the site.</p>`,
   },
@@ -216,9 +221,9 @@ const SHORT = [
   {
     id: "fl5",
     dur: 6.5,
-    caption: "Buried crevasses: steep cracks rising from the bed, capped by smooth layers.",
-    html: `<p>The detailed survey shows them clearly: steep cracks, about 450&nbsp;m apart, that rise from the bed and stop
-      beneath smooth layers. We think they are crevasses that formed when the ice rise was afloat, filled with sea water
+    caption: "Steep reflectors that look like cracks, rising from the bed and capped by smooth layers.",
+    html: `<p>The detailed survey shows them clearly: steep reflectors that look like cracks, rising from the bed and
+      stopping beneath smooth layers. We think they are crevasses that formed when the ice rise was afloat, filled with sea water
       that froze.</p>`,
   },
   {
@@ -230,10 +235,12 @@ const SHORT = [
   {
     id: "block",
     dur: 13,
-    caption: "A hot-water drill will melt a hole through 540 m of ice to the bed, straight through the buried crevasses.",
-    html: `<p>A hot-water drill will melt a hole through the full 540&nbsp;m of ice to the bed, through the buried crevasses
-      about 450&nbsp;m down. A camera will look for refrozen sea water in its walls, and a corer will sample the sediment
-      beneath.</p>`,
+    caption: "A hot-water drill will melt a hole through 550 m of ice to the bed, straight through the buried crevasses.",
+    caption2: "Frozen sea water in the cracks would show it was afloat. The sediment at the bed will show when.",
+    split: 0.72,
+    html: `<p>A hot-water drill will melt a hole through the full 550&nbsp;m of ice to the bed, through the buried crevasses
+      about 450&nbsp;m down. A camera will look for refrozen sea water in its walls: that would show the ice rise was once
+      afloat. A corer will sample the sediment beneath, which will tell us when.</p>`,
   },
   {
     id: "end",
