@@ -32,12 +32,13 @@ npm run video
 
 This writes `video/phire_full.mp4` and `video/phire_short.mp4` (1080 × 1920, 30 fps, no sound). It uses the
 Chrome installed on this machine through `playwright-core` and the ffmpeg binary from `ffmpeg-static`, so nothing
-is downloaded at render time. The full video takes about 35 minutes, mostly the software-rendered 3-D frames.
+is downloaded at render time. With `--gpu` (as `npm run video` does) the full video takes about 3 minutes on a Mac;
+without it Chrome renders the 3-D frames in software, which works anywhere but takes about 35 minutes.
 Useful options:
 
 ```bash
-node scripts/render_video.mjs --version short
-node scripts/render_video.mjs --from 55 --to 75 --fps 10 --out video/preview.mp4
+node scripts/render_video.mjs --gpu --version short
+node scripts/render_video.mjs --gpu --from 55 --to 75 --fps 10 --out video/preview.mp4
 node scripts/render_video.mjs --stills 5,25,60 --out video/stills
 ```
 
