@@ -10,8 +10,9 @@ export const easeInOut = (t) => {
 };
 export const easeOut = (t) => 1 - Math.pow(1 - clamp(t), 3);
 
-// Progress of x through [a, b], clamped to 0-1.
-export const ramp = (x, a, b) => clamp((x - a) / (b - a));
+// Progress of x through [a, b], clamped to 0-1. b may be less than a (a falling ramp); when a == b
+// (a beat this version leaves out) it is a step at a.
+export const ramp = (x, a, b) => (b !== a ? clamp((x - a) / (b - a)) : x >= a ? 1 : 0);
 
 // Smooth zoom-and-pan between two views [cx, cy, span] (van Wijk and Nuij 2003, as in d3-interpolate).
 // The camera pulls back as it travels so long moves stay readable.
