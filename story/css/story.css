@@ -80,12 +80,18 @@ body.loaded #loading { opacity: 0; pointer-events: none; }
 .hero h1 {
   font-family: var(--serif);
   font-weight: 650;
-  font-size: clamp(40px, 7vw, 84px);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-  margin: 0 0 22px;
-  max-width: 13ch;
-  text-wrap: balance;
+  font-size: clamp(64px, 11vw, 140px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  margin: 0 0 10px;
+}
+.subtitle {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(20px, 2.6vw, 32px);
+  line-height: 1.2;
+  color: var(--ink-2);
+  margin: 0 0 26px;
 }
 .hero .dek {
   font-size: clamp(17px, 2vw, 21px);
@@ -201,13 +207,10 @@ body.loaded #loading { opacity: 0; pointer-events: none; }
   font-size: 13px;
   font-weight: 650;
   font-family: var(--sans);
-  paint-order: stroke;
-  stroke: rgba(3, 7, 13, 0.85);
-  stroke-width: 4px;
-  stroke-linejoin: round;
 }
+.rg-pill { fill: rgba(3, 7, 13, 0.82); stroke: rgba(255, 255, 255, 0.35); stroke-width: 1; }
 .drill-note { fill: var(--drill); }
-.rg-arrow { stroke: #fff; stroke-width: 1.5; }
+.rg-arrow { stroke: #fff; stroke-width: 2; filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9)); }
 
 .tline { fill: none; stroke-linejoin: round; }
 .tline.ref { stroke: rgba(196, 242, 90, 0.35); stroke-width: 1.5; }
@@ -309,6 +312,7 @@ body.loaded #loading { opacity: 0; pointer-events: none; }
 }
 .label3d.hot { color: #9fe8ff; }
 .label3d.depth { color: var(--drill); font-variant-numeric: tabular-nums; }
+.label3d.core { color: #e8d3a8; }
 
 .caption { display: none; }
 .titlecard {
@@ -325,31 +329,50 @@ body.loaded #loading { opacity: 0; pointer-events: none; }
 .titlecard h1 {
   font-family: var(--serif);
   font-weight: 650;
-  font-size: clamp(40px, 6vw, 80px);
-  line-height: 1.03;
-  margin: 0;
-  max-width: 12ch;
+  font-size: clamp(64px, 9vw, 120px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  margin: 0 0 8px;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
+.titlecard .subtitle { margin: 0; color: var(--ink); text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8); }
 body:not(.video) .titlecard { left: calc(var(--col) + 56px); padding: 0 4vw; }
 
 /* ------------------------------------------------------------------ mobile article */
 
 @media (max-width: 899px) {
   :root { --col: calc(100vw - 32px); }
-  body { font-size: 15px; line-height: 1.55; }
-  .step { width: auto; margin: 0 16px; padding-top: 60vh; }
-  .card { padding: 14px 16px; background: rgba(9, 14, 22, 0.8); }
-  .panel { left: 12px; right: 12px; top: 64px; bottom: auto; height: 36vh; }
-  .hudcol { top: 10px; right: 12px; gap: 6px; max-width: 70vw; }
-  .ticker { min-width: 0; padding: 6px 10px; display: flex; gap: 10px; align-items: baseline; }
-  .t-date { font-size: 18px; }
+  body { font-size: 16px; line-height: 1.55; }
+  /* the figures take the top of the screen and the text scrolls beneath them, so the text never covers them */
+  body:not(.video) #stage { bottom: auto; height: 56vh; z-index: 2; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); }
+  body:not(.video) .hero { padding-top: 58vh; justify-content: flex-start; background: none; }
+  body:not(.video) .hero h1 { font-size: 72px; }
+  body:not(.video) .hero .dek { font-size: 17px; }
+  /* each card sticks just below the figures for the whole of its beat, then the next one pushes it away */
+  .step { width: auto; margin: 0 18px; padding-top: 0; }
+  .card {
+    position: sticky;
+    top: calc(56vh + 14px);
+    background: var(--bg);
+    border: 0;
+    box-shadow: none;
+    padding: 0 0 14px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    font-size: 15px;
+  }
+  .credits { z-index: 3; }
+  .panel { left: 8px; right: 8px; top: auto; bottom: 18px; height: 50%; padding: 6px 8px; }
+  .hudcol { top: 8px; right: 8px; gap: 6px; max-width: 70vw; }
+  .ticker { min-width: 0; padding: 5px 9px; display: flex; gap: 10px; align-items: baseline; }
+  .t-date { font-size: 17px; }
   .t-season, .t-km { font-size: 10px; }
-  .clock { padding: 8px 12px; }
-  .c-years { font-size: 28px; }
+  .clock { padding: 6px 10px; }
+  .c-years { font-size: 26px; }
   body:not(.video) .legend { display: none !important; }
-  .credit { left: 12px; }
+  .credit { left: 8px; bottom: 3px; font-size: 9px; }
   body:not(.video) .titlecard { left: 0; }
+  body:not(.video) .titlecard h1 { font-size: 64px; }
 }
 
 /* ------------------------------------------------------------------ video (1080x1920 from a 540x960 viewport at 2x) */
@@ -384,7 +407,8 @@ body.video .caption p {
   opacity: 0;
 }
 body.video .titlecard { padding: 0 28px; justify-content: center; }
-body.video .titlecard h1 { font-size: 50px; }
+body.video .titlecard h1 { font-size: 96px; }
+body.video .titlecard .subtitle { font-size: 27px; max-width: 14ch; }
 body.video .label3d { font-size: 13px; }
 body.video #stage::after {
   /* gentle darkening behind the captions */

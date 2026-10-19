@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHIRE in one minute</title>
+  <meta name="description" content="How a radar survey of Henry Ice Rise found crevasses buried deep in the ice, what they may say about the West Antarctic Ice Sheet, and why the PHIRE expedition will drill into them.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/story.css">
+  <link rel="modulepreload" href="vendor/three.module.min.js">
+</head>
+<body data-version="short">
+  <div id="stage" aria-hidden="true">
+    <canvas id="map"></canvas>
+    <canvas id="block"></canvas>
+    <div id="labels3d"></div>
+    <div id="overlay"></div>
+  </div>
+  <div id="loading" role="status">Loading radar data and imagery…</div>
+
+  <header class="hero">
+    <h1 id="hero-title"></h1>
+    <p class="subtitle" id="hero-subtitle"></p>
+    <p class="dek" id="hero-dek"></p>
+    <p class="scroll-hint">Scroll to begin <span aria-hidden="true">↓</span></p>
+  </header>
+
+  <main id="steps"></main>
+
+  <footer class="credits">
+    <div class="credits-inner">
+      <h2>Sources</h2>
+      <ul>
+        <li><strong>Radar.</strong> DELORES ice-penetrating radar, Henry Ice Rise, 2013/14 and 2014/15 field seasons (British
+          Antarctic Survey), in the order the lines were driven. Interpretation: Kingslake et al. (2018), <em>Nature</em> 558,
+          430–434, <a href="https://doi.org/10.1038/s41586-018-0208-x">doi:10.1038/s41586-018-0208-x</a>.</li>
+        <li><strong>Imagery.</strong> LIMA and MODIS Mosaic of Antarctica via Quantarctica; WorldView-1 image of 28 February 2025
+          © Maxar Technologies, via the Polar Geospatial Center. Grounding line: MEaSUREs (NSIDC).</li>
+      </ul>
+      <p class="small">The <a href="index.html">full story</a> also covers why the crevasses matter, an ice-sheet model of the
+        region, and what the borehole will measure.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    import { TITLE, SUBTITLE, DEK } from "./js/beats.js";
+    document.getElementById("hero-title").textContent = TITLE;
+    document.getElementById("hero-subtitle").textContent = SUBTITLE;
+    document.getElementById("hero-dek").textContent = DEK;
+  </script>
+</body>
+</html>

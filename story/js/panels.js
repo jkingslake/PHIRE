@@ -46,14 +46,15 @@ function ticks(a, b, n = 5) {
 // ------------------------------------------------------------------ radargram viewer
 
 const RG_NOTES = {
-  line3: {
-    title: "HE Line 3",
-    sub: "4–5 January 2014 · unmigrated",
+  ridge: {
+    title: "HEnorth along the ridge",
+    sub: "9 January 2014 · the last day of the 2013/14 survey",
     notes: [
-      { d: 17, z: 60, text: "ice surface", view: "full" },
-      { d: 17, z: -250, text: "layers of buried snowfall", view: "full" },
-      { d: 17, z: -615, text: "bed", view: "full" },
-      { d: 30.5, z: -360, text: "steep, bright echoes", view: "zoom", arrow: [29.3, -420] },
+      { d: 5, z: 130, text: "ice surface", view: "full" },
+      { d: 11, z: -170, text: "layers of buried snowfall", view: "full" },
+      { d: 8, z: -585, text: "bed", view: "full" },
+      { d: 35.6, z: -262, text: "steep, bright echoes", view: "zoom", arrow: [34.2, -325] },
+      { d: 31.9, z: -432, text: "bed", view: "zoom" },
     ],
   },
   fl5: {
@@ -63,16 +64,15 @@ const RG_NOTES = {
       { d: 3, z: 85, text: "ice surface", view: "full" },
       { d: 3, z: -120, text: "layers of buried snowfall", view: "full" },
       { d: 3, z: -440, text: "bed", view: "full" },
-      { d: 10.4, z: -275, text: "buried crevasses", view: "zoom", arrow: [10.0, -330] },
+      { d: 10.4, z: -272, text: "buried crevasses", view: "zoom", arrow: [9.95, -328] },
       { d: 7.6, z: -432, text: "bed", view: "zoom" },
     ],
   },
 };
 
 export class Radargram {
-  constructor(root, meta, images) {
+  constructor(root, meta) {
     this.meta = meta;
-    this.images = images;
     this.root = el("figure", "panel rg", root);
     const head = el("figcaption", "rg-head", this.root);
     this.title = el("span", "rg-title", head);
@@ -84,6 +84,9 @@ export class Radargram {
     this.imgFull.alt = "";
     this.imgZoom.alt = "";
     this.svg = svg("svg", { class: "rg-svg" }, this.plot);
+    const defs = svg("defs", {}, this.svg);
+    const mk = svg("marker", { id: "rg-arrowhead", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+    svg("path", { d: "M0,0 L10,5 L0,10 z", fill: "#fff" }, mk);
     this.gAxes = svg("g", { class: "axes" }, this.svg);
     this.gOver = svg("g", {}, this.svg);
     this.box = svg("rect", { class: "rg-box" }, this.gOver);
@@ -105,10 +108,11 @@ export class Radargram {
     this.notes.replaceChildren();
     this.noteEls = RG_NOTES[which].notes.map((n) => {
       const g = svg("g", {}, this.notes);
+      const a = n.arrow ? svg("line", { class: "rg-arrow", "marker-end": "url(#rg-arrowhead)" }, g) : null;
+      const bg = svg("rect", { class: "rg-pill", rx: 4 }, g);
       const t = svg("text", { class: "rg-note" }, g);
       t.textContent = n.text;
-      const a = n.arrow ? svg("line", { class: "rg-arrow" }, g) : null;
-      return { n, g, t, a };
+      return { n, g, t, a, bg };
     });
   }
 
@@ -165,25 +169,29 @@ export class Radargram {
     if (m.drill_d && st.drill > 0.005) {
       const x = X(m.drill_d);
       const surf = interp(m.line.d, m.line.surface, m.drill_d);
-      Object.entries({ x1: x, x2: x, y1: Y(surf), y2: Y(surf - 450) }).forEach(([k, v]) => this.drill.setAttribute(k, v));
+      Object.entries({ x1: x, x2: x, y1: Y(surf), y2: Y(m.drill_bed_z) }).forEach(([k, v]) => this.drill.setAttribute(k, v));
       this.drill.style.opacity = st.drill;
       this.drillLabel.setAttribute("x", x + 6);
-      this.drillLabel.setAttribute("y", Math.max(mt + 12, Y(surf - 450) + 4));
+      this.drillLabel.setAttribute("y", Math.max(mt + 12, Y(m.drill_bed_z) + 4));
       this.drillLabel.style.opacity = st.drill;
     } else {
       this.drill.style.opacity = 0;
       this.drillLabel.style.opacity = 0;
     }
 
-    for (const { n, g, t, a } of this.noteEls) {
+    for (const { n, g, t, a, bg } of this.noteEls) {
       const vis = n.view === "full" ? (1 - clamp(e / 0.3)) * clamp((st.reveal * (F.d[1] - F.d[0]) + F.d[0] - n.d) / 1.5 + 1) : clamp((e - 0.8) / 0.2);
       g.style.opacity = vis * st.notes;
+      if (vis * st.notes < 0.01) continue;
       t.setAttribute("x", X(n.d));
       t.setAttribute("y", Y(n.z));
       t.setAttribute("text-anchor", "middle");
+      t.setAttribute("dominant-baseline", "middle");
+      const bb = t.getBBox();
+      Object.entries({ x: bb.x - 6, y: bb.y - 3, width: bb.width + 12, height: bb.height + 6 }).forEach(([k, v]) => bg.setAttribute(k, v));
       if (a) {
         a.setAttribute("x1", X(n.d));
-        a.setAttribute("y1", Y(n.z) + 6);
+        a.setAttribute("y1", bb.y + bb.height + 3);
         a.setAttribute("x2", X(n.arrow[0]));
         a.setAttribute("y2", Y(n.arrow[1]));
       }

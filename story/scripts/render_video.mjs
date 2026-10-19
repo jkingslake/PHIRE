@@ -1,7 +1,8 @@
 // Render the story to a vertical (1080x1920) MP4 by stepping the page's timeline frame by frame.
 //
 //   cd story && npm install && npm run video
-//   node scripts/render_video.mjs --fps 30 --out video/phire_buried_crevasses.mp4
+//   node scripts/render_video.mjs --version short                    # the one-minute version
+//   node scripts/render_video.mjs --fps 30 --out video/phire_full.mp4
 //   node scripts/render_video.mjs --from 20 --to 30 --fps 10 --out video/preview.mp4   # a quick look
 //   node scripts/render_video.mjs --stills 3,25,60 --out video/stills                  # PNG frames
 //
@@ -22,7 +23,8 @@ const args = Object.fromEntries(
   process.argv.slice(2).reduce((acc, a, i, all) => (a.startsWith("--") ? [...acc, [a.slice(2), all[i + 1]?.startsWith("--") ? true : all[i + 1] ?? true]] : acc), [])
 );
 const FPS = +(args.fps ?? 30);
-const OUT = path.resolve(ROOT, args.out ?? "video/phire_buried_crevasses.mp4");
+const VERSION = args.version ?? "full"; // full or short
+const OUT = path.resolve(ROOT, args.out ?? (VERSION === "short" ? "video/phire_short.mp4" : "video/phire_full.mp4"));
 const W = 540, H = 960, SCALE = 2; // CSS viewport and device scale: 1080x1920 frames
 
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg" };
@@ -52,7 +54,7 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE });
 page.on("console", (m) => m.type() === "error" && console.error("page:", m.text()));
 page.on("pageerror", (e) => console.error("page error:", e.message));
-await page.goto(`http://127.0.0.1:${port}/index.html?video`, { waitUntil: "load" });
+await page.goto(`http://127.0.0.1:${port}/index.html?video&v=${VERSION}`, { waitUntil: "load" });
 await page.evaluate(() => window.__story.ready);
 const duration = await page.evaluate(() => window.__story.duration);
 
