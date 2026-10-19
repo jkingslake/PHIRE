@@ -42,9 +42,10 @@ PATHS = {
         "2013/14": FIELD / "FieldData_13_14_old/DELORES",
         "2014/15": FIELD / "FieldData_14_15_old/DELORES",
     },
-    # Season 1 discovery line (HE Line 3, both halves joined), processed for Kingslake et al. (2018)
-    "line3_radargram": HF / "HE_Line3Whole/HELINE3_whole_RADARGRAM.mat",
-    "line3_pos": HF / "HE_Line3Whole/HELineWhole_Pos.mat",
+    # Season 1 discovery line: north-west along the ridge on 9 January 2014, the last day of the survey,
+    # ending in the corner where the relic crevasses were first seen (ReflexW SEG-Y export)
+    "ridge_sgy": FIELD / "FieldData_13_14_old/DELORES/HE/HENorthAlongRidge_1/ASCII/HENORTHALONGRIDGE.SGY",
+    "ridge_pos": FIELD / "FieldData_13_14_old/DELORES/HE/HENorthAlongRidge_1/HENorthAlongRidge_1positions_polar.dat",
     # Season 2 line through the drill site, as in preliminary-planning/HIR_radargram_plotting.ipynb
     "fl5_radargram": HF / "HENORTH_FL5/FinalRadargramForPublication/HENORTH_FL5_2.ASC",
     "fl5_pos": HF / "HEnorth_FL5/FinalRadargramForPublication/DBPosFL15.dst",
@@ -501,15 +502,41 @@ def radargram_image(A, d_km, z, d_range, z_range, width, height, clip=4.0):
     return rgb
 
 
-def load_line3():
-    import scipy.io as sio
+def load_ridge(decimate=2):
+    """HENorthAlongRidge_1, gained and on an elevation grid.
 
-    R = sio.loadmat(PATHS["line3_radargram"])["R"]
-    P = sio.loadmat(PATHS["line3_pos"])["Pos"]
-    x, y, h = P[:, 2], P[:, 3], P[:, 6]
+    The export is topography-corrected with the raw GPS heights, which have spikes, and has a time-zero
+    offset of about 100 samples. So each trace is re-hung here: the surface echo is picked trace by trace
+    and placed at a smoothed GPS surface elevation. The gain is applied by depth below the surface.
+    """
+    import segyio
+    from scipy.ndimage import map_coordinates, median_filter, uniform_filter1d
+    from scipy.spatial import cKDTree
+
+    with segyio.open(PATHS["ridge_sgy"], ignore_geometry=True) as f:
+        R = segyio.tools.collect(f.trace[:]).T.astype(np.float32)  # samples x traces
+        x = f.attributes(segyio.TraceField.SourceX)[:] / 10.0
+        y = f.attributes(segyio.TraceField.SourceY)[:] / 10.0
     d = np.insert(np.cumsum(np.hypot(np.diff(x), np.diff(y))), 0, 0) / 1000
-    z = h.max() - SAMPLE_TO_DIST * np.arange(R.shape[0])
-    return R, x, y, h, d, z
+    pos = np.loadtxt(PATHS["ridge_pos"], delimiter=",")
+    _, k = cKDTree(pos[:, :2]).query(np.column_stack([x, y]))
+    h = median_filter(pos[k, 2], 801, mode="nearest")
+    h = uniform_filter1d(h, 401, mode="nearest")
+    # surface echo: first sample after the start of the record that exceeds 40% of the trace maximum
+    seg = np.abs(R[40:450])
+    s = 40 + np.argmax(seg > 0.4 * seg.max(axis=0), axis=0)
+    s = median_filter(s.astype(float), 301, mode="nearest")
+    # depth-referenced, smoothed along the line and decimated
+    R = uniform_filter1d(R, decimate, axis=1)[:, ::decimate]
+    s, h, x, y, d = s[::decimate], h[::decimate], x[::decimate], y[::decimate], d[::decimate]
+    nd = int(R.shape[0] - s.max() - 1)
+    cols = np.broadcast_to(np.arange(R.shape[1]), (nd, R.shape[1]))
+    F = map_coordinates(R, [s[None, :] + np.arange(nd)[:, None], cols], order=1)
+    g = uniform_filter1d(np.median(np.abs(F), axis=1), 31) + 1e-6
+    F /= g[:, None]
+    z = np.arange(np.ceil(h.max()), np.floor(h.min() - nd * SAMPLE_TO_DIST), -1.0)
+    A = map_coordinates(F, [(h[None, :] - z[:, None]) / SAMPLE_TO_DIST, np.broadcast_to(np.arange(F.shape[1]), (len(z), F.shape[1]))], order=1, cval=np.nan)
+    return A, x, y, h, d, z
 
 
 def load_fl5():
@@ -540,18 +567,17 @@ def line_meta(x, y, h, d, every_m=50):
 
 def step_radargrams():
     meta = {}
-    print("HE Line 3 (2013/14)")
-    R, x, y, h, d, z = load_line3()
-    A = row_gain(R)
-    full = dict(d=[0, round(float(d[-1]), 3)], z=[-700, 200])
-    save_webp("rg_line3.webp", radargram_image(A, d, z, full["d"], full["z"], 2400, 760), quality=85)
-    zoom = dict(d=[26.0, 34.2], z=[-640, -300])
-    save_webp("rg_line3_zoom.webp", radargram_image(A, d, z, zoom["d"], zoom["z"], 2000, 760), quality=85)
-    meta["line3"] = {
-        "name": "HE Line 3",
-        "date": "2014-01-05",
-        "full": {"src": "assets/rg_line3.webp", **full},
-        "zoom": {"src": "assets/rg_line3_zoom.webp", **zoom},
+    print("HEnorth along the ridge (9 Jan 2014)")
+    A, x, y, h, d, z = load_ridge()
+    full = dict(d=[0, round(float(d[-1]), 3)], z=[-640, 200])
+    save_webp("rg_ridge.webp", radargram_image(A, d, z, full["d"], full["z"], 2400, 760, clip=3.5), quality=85)
+    zoom = dict(d=[31.2, round(float(d[-1]), 3)], z=[-520, -230])
+    save_webp("rg_ridge_zoom.webp", radargram_image(A, d, z, zoom["d"], zoom["z"], 2000, 760, clip=3.5), quality=85)
+    meta["ridge"] = {
+        "name": "HEnorth along the ridge",
+        "date": "2014-01-09",
+        "full": {"src": "assets/rg_ridge.webp", **full},
+        "zoom": {"src": "assets/rg_ridge_zoom.webp", **zoom},
         "line": line_meta(x, y, h, d),
         "migrated": False,
     }
@@ -573,8 +599,14 @@ def step_radargrams():
     zz = np.linspace(face["z"][1], face["z"][0], rgb.shape[0])
     alpha = (zz[:, None] <= surf[None, :] + 2).astype(np.float32)
     save_webp("rg_fl5_face.webp", np.dstack([rgb, alpha]), quality=85)
+    # bed at the drill site: the strongest echo between 380 and 460 m below sea level
+    near = np.abs(d - d[k]) < 0.05
+    rows = (z > -460) & (z < -380)
+    bed_z = float(z[rows][np.argmax(np.abs(R[np.ix_(rows, near)]).mean(axis=1))])
+    print(f"  bed at the drill site: {bed_z:.0f} m, surface {h[k]:.0f} m, ice {h[k] - bed_z:.0f} m thick")
     meta["fl5"] = {
         "name": "HEnorth FL5",
+        "drill_bed_z": round(bed_z, 1),
         "date": "2014-12",
         "full": {"src": "assets/rg_fl5.webp", **full},
         "zoom": {"src": "assets/rg_fl5_zoom.webp", **zoom},

@@ -1,5 +1,5 @@
 // A block of ice cut along radar line FL5 at the drill site: the radargram is the front face, the
-// WorldView-1 image is draped over the top, and the borehole goes down the face at the drill site.
+// WorldView-1 image is draped over the top, and the hot-water borehole goes down the face to the bed.
 
 import * as THREE from "../vendor/three.module.min.js";
 import { clamp, lerp, easeInOut } from "./util.js";
@@ -115,8 +115,11 @@ export class Block3D {
     bottom.rotation.x = -Math.PI / 2;
     g.add(bottom);
 
-    // borehole and rig
-    this.surfY = this.Yof(this.surfAt(this.data.rg.drill_d));
+    // borehole (to the bed) and rig
+    this.surfElev = this.surfAt(this.data.rg.drill_d);
+    this.bedElev = this.data.rg.drill_bed_z;
+    this.holeDepth = this.surfElev - this.bedElev;
+    this.surfY = this.Yof(this.surfElev);
     const holeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(COLORS.drill) });
     this.hole = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 1, 16), holeMat);
     this.hole.position.set(this.drillX, this.surfY, D / 2 + 0.02);
@@ -126,6 +129,10 @@ export class Block3D {
     const rig = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.2, 4), new THREE.MeshLambertMaterial({ color: new THREE.Color(COLORS.drill) }));
     rig.position.set(this.drillX, this.surfY + 0.1, D / 2);
     g.add(rig);
+    // the sediment core taken at the bed
+    this.core = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.12, 20), new THREE.MeshLambertMaterial({ color: 0x8a7350 }));
+    this.core.position.set(this.drillX, this.Yof(this.bedElev) - 0.06, D / 2 + 0.03);
+    g.add(this.core);
     // glow sprite at the drill head
     const glow = document.createElement("canvas");
     glow.width = glow.height = 64;
@@ -154,9 +161,10 @@ export class Block3D {
     const D = this.D;
     return [
       { e: mk("ice surface"), p: () => [-this.L / 2 + 0.6, this.Yof(this.surfAt(this.d0 + 0.6)) + 0.12, D / 2], a: (s) => s.labels },
-      { e: mk("bed, about 540 m down"), p: () => [-this.L / 2 + 1.6, this.Yof(-440), D / 2], a: (s) => s.labels },
-      { e: mk("buried crevasses", "hot"), p: () => [this.drillX + 0.75, this.Yof(-285), D / 2], a: (s) => s.labels * clamp((s.drill - 0.5) / 0.3) },
-      { e: mk("", "depth"), p: () => [this.drillX + 0.12, this.headY, D / 2], a: (s) => clamp(s.drill * 20) * (1 - clamp((s.drill - 0.98) / 0.02) * 0) * s.labels, depth: true },
+      { e: mk("bed"), p: () => [-this.L / 2 + 1.6, this.Yof(this.bedElev - 30), D / 2], a: (s) => s.labels },
+      { e: mk("buried crevasses", "hot"), p: () => [this.drillX + 1.0, this.Yof(-262), D / 2], a: (s) => s.labels * clamp((s.drill - 0.6) / 0.2) },
+      { e: mk("", "depth"), p: () => [this.drillX + 0.12, this.headY, D / 2], a: (s) => clamp(s.drill * 20) * s.labels, depth: true },
+      { e: mk("sediment core from the bed", "core"), p: () => [this.drillX + 0.1, this.Yof(this.bedElev) - 0.22, D / 2], a: (s) => clamp((s.drill - 0.97) / 0.03) * s.labels },
     ];
   }
 
@@ -175,8 +183,8 @@ export class Block3D {
     for (const l of this.labels) l.e.style.opacity = 0;
     if (st.alpha < 0.005) return;
 
-    // borehole down to the RAID depth (450 m)
-    const depthM = 450 * clamp(st.drill);
+    // borehole from the surface to the bed
+    const depthM = this.holeDepth * clamp(st.drill);
     const hLen = (depthM / 1000) * VE;
     this.hole.visible = depthM > 0.5;
     this.hole.scale.y = Math.max(hLen, 1e-4);
@@ -185,6 +193,7 @@ export class Block3D {
     this.head.position.set(this.drillX, this.headY, this.D / 2 + 0.03);
     this.glow.position.copy(this.head.position);
     this.head.visible = this.glow.visible = st.drill > 0.001 && st.drill < 0.999;
+    this.core.visible = st.drill >= 0.97;
 
     // camera path: straight down over the drill site at the map's scale, then out to the side.
     // Oblique views are pulled back in narrow (portrait) frames so the block still fits.
@@ -223,8 +232,8 @@ export class Block3D {
       const x = ((p.x + 1) / 2) * this.w, y = ((1 - p.y) / 2) * this.h;
       const a = l.a(st) * st.alpha * (p.z < 1 ? 1 : 0);
       l.e.style.opacity = a;
-      l.e.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
-      if (l.depth) l.e.textContent = `${Math.round(depthM)} m`;
+      l.e.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)${l.right ? " translateX(-100%)" : ""}`;
+      if (l.depth) l.e.textContent = st.drill >= 0.999 ? `${Math.round(depthM)} m · bed` : `${Math.round(depthM)} m`;
     }
   }
 }

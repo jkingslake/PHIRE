@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buried Crevasses · PHIRE</title>
+  <title>PHIRE · POLAR Henry Ice Rise Expedition</title>
   <meta name="description" content="How a radar survey of Henry Ice Rise found crevasses buried deep in the ice, what they may say about the West Antarctic Ice Sheet, and why the PHIRE expedition will drill into them.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,8 +21,8 @@
   <div id="loading" role="status">Loading radar data and imagery…</div>
 
   <header class="hero">
-    <p class="kicker">PHIRE · Henry Ice Rise Expedition</p>
     <h1 id="hero-title"></h1>
+    <p class="subtitle" id="hero-subtitle"></p>
     <p class="dek" id="hero-dek"></p>
     <p class="scroll-hint">Scroll to begin <span aria-hidden="true">↓</span></p>
   </header>
@@ -36,8 +36,9 @@
         prepares them is in <code>story/scripts/</code> of the PHIRE repository.</p>
       <ul>
         <li><strong>Radar.</strong> DELORES ice-penetrating radar, Henry Ice Rise, 2013/14 and 2014/15 field seasons
-          (British Antarctic Survey). Track order and dates from the radar acquisition logs. Radargrams of HE Line 3 and
-          HEnorth FL5 as processed for Kingslake et al. (2018); display gain applied here.</li>
+          (British Antarctic Survey). Track order and dates from the radar acquisition logs. The 9 January 2014 line
+          along the ridge is the ReflexW export, re-referenced to a smoothed GPS surface; HEnorth FL5 as processed for
+          Kingslake et al. (2018). Display gain applied here.</li>
         <li><strong>Interpretation.</strong> Kingslake, J., et al. (2018). Extensive retreat and re-advance of the West
           Antarctic Ice Sheet during the Holocene. <em>Nature</em> 558, 430–434.
           <a href="https://doi.org/10.1038/s41586-018-0208-x">doi:10.1038/s41586-018-0208-x</a>. Wearing, M. G., and
@@ -55,14 +56,16 @@
         <li><strong>Ice boundaries and speed.</strong> MEaSUREs Antarctic Boundaries and MEaSUREs ice velocity (NSIDC), via
           Quantarctica.</li>
       </ul>
-      <p class="small">Maps are in polar stereographic projection (EPSG:3031). 3-D view vertically exaggerated three times.</p>
+      <p class="small">Maps are in polar stereographic projection (EPSG:3031). 3-D view vertically exaggerated three times.
+        A <a href="short.html">one-minute version</a> covers just the two radar seasons and the drilling.</p>
     </div>
   </footer>
 
   <script type="module" src="js/main.js"></script>
   <script type="module">
-    import { TITLE, DEK } from "./js/beats.js";
+    import { TITLE, SUBTITLE, DEK } from "./js/beats.js";
     document.getElementById("hero-title").textContent = TITLE;
+    document.getElementById("hero-subtitle").textContent = SUBTITLE;
     document.getElementById("hero-dek").textContent = DEK;
   </script>
 </body>
