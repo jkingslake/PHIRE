@@ -2,6 +2,7 @@
 //
 //   cd story && npm install && npm run video
 //   node scripts/render_video.mjs --version short                    # the one-minute version
+//   node scripts/render_video.mjs --gpu --voice                       # with narration (run make_voice.py first)
 //   node scripts/render_video.mjs --fps 30 --out video/phire_full.mp4
 //   node scripts/render_video.mjs --from 20 --to 30 --fps 10 --out video/preview.mp4   # a quick look
 //   node scripts/render_video.mjs --stills 3,25,60 --out video/stills                  # PNG frames
@@ -10,7 +11,7 @@
 // ffmpeg binary from the ffmpeg-static package.
 
 import { createServer } from "node:http";
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { readFile, mkdir, writeFile, rename, rm } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,7 +25,8 @@ const args = Object.fromEntries(
 );
 const FPS = +(args.fps ?? 30);
 const VERSION = args.version ?? "full"; // full or short
-const OUT = path.resolve(ROOT, args.out ?? (VERSION === "short" ? "video/phire_short.mp4" : "video/phire_full.mp4"));
+const VOICE = Boolean(args.voice); // narration from scripts/make_voice.py, mixed in after the frames
+const OUT = path.resolve(ROOT, args.out ?? `video/phire_${VERSION}${VOICE ? "_voice" : ""}.mp4`);
 const W = 540, H = 960, SCALE = 2; // CSS viewport and device scale: 1080x1920 frames
 
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg" };
@@ -56,9 +58,35 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE });
 page.on("console", (m) => m.type() === "error" && console.error("page:", m.text()));
 page.on("pageerror", (e) => console.error("page error:", e.message));
-await page.goto(`http://127.0.0.1:${port}/index.html?video&v=${VERSION}`, { waitUntil: "load" });
+await page.goto(`http://127.0.0.1:${port}/index.html?video&v=${VERSION}${VOICE ? "&voice" : ""}`, { waitUntil: "load" });
 await page.evaluate(() => window.__story.ready);
 const duration = await page.evaluate(() => window.__story.duration);
+console.log(`${VERSION}${VOICE ? " with narration" : ""}: ${duration.toFixed(1)} s`);
+
+const run = (argv) =>
+  new Promise((resolve, reject) => {
+    const p = spawn(ffmpegPath, argv, { stdio: ["ignore", "inherit", "inherit"] });
+    p.on("close", (code) => (code ? reject(new Error(`ffmpeg exited with ${code}`)) : resolve()));
+  });
+
+// Mix the narration clips that fall in [t0, t1] onto the silent video: each clip delayed to its start, the mix
+// normalised to -14 LUFS, the video stream copied.
+async function addNarration(silent, out, clips, t0, t1) {
+  const inputs = [], chains = [];
+  for (const c of clips) {
+    if (c.start >= t1 || c.start + c.seconds <= t0) continue;
+    const k = chains.length;
+    const cut = c.start < t0 ? `atrim=start=${(t0 - c.start).toFixed(3)},asetpts=PTS-STARTPTS,` : "";
+    const delay = Math.max(0, Math.round((c.start - t0) * 1000));
+    inputs.push("-i", path.join(ROOT, c.file));
+    chains.push(`[${k + 1}:a]${cut}aresample=48000,adelay=${delay}:all=1[a${k}]`);
+  }
+  if (!chains.length) return rename(silent, out);
+  const mix = `${chains.join(";")};${chains.map((_, k) => `[a${k}]`).join("")}amix=inputs=${chains.length}:normalize=0:dropout_transition=0,apad,loudnorm=I=-14:TP=-1.5:LRA=11[aout]`;
+  await run(["-y", "-loglevel", "error", "-i", silent, ...inputs, "-filter_complex", mix, "-map", "0:v", "-map", "[aout]",
+    "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-shortest", "-movflags", "+faststart", out]);
+  await rm(silent);
+}
 
 const renderAt = (t) =>
   page.evaluate(async (t) => {
@@ -79,10 +107,11 @@ if (args.stills) {
   const t1 = Math.min(+(args.to ?? duration), duration);
   const n = Math.round((t1 - t0) * FPS);
   await mkdir(path.dirname(OUT), { recursive: true });
+  const target = VOICE ? OUT.replace(/\.mp4$/, ".silent.mp4") : OUT;
   const ff = spawn(
     ffmpegPath,
     ["-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "mjpeg", "-i", "-",
-     "-c:v", "libx264", "-preset", "slow", "-crf", "21", "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT],
+     "-c:v", "libx264", "-preset", "slow", "-crf", "21", "-pix_fmt", "yuv420p", "-movflags", "+faststart", target],
     { stdio: ["pipe", "inherit", "inherit"] }
   );
   const started = Date.now();
@@ -97,6 +126,7 @@ if (args.stills) {
   }
   ff.stdin.end();
   await new Promise((r) => ff.on("close", r));
+  if (VOICE) await addNarration(target, OUT, await page.evaluate(() => window.__story.voiceClips), t0, t1);
   console.log(`\nwrote ${OUT}`);
 }
 
