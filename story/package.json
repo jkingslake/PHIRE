@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "serve": "python3 -m http.server 8765",
-    "video": "node scripts/render_video.mjs --gpu && node scripts/render_video.mjs --gpu --version short"
+    "video": "node scripts/render_video.mjs --gpu && node scripts/render_video.mjs --gpu --version short",
+    "script": "node scripts/write_script.mjs"
   },
   "devDependencies": {
     "ffmpeg-static": "5.2.0",
