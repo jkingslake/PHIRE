@@ -1,8 +1,7 @@
 // Orchestration: one timeline, two drivers.
 //   Article mode: the scroll position is mapped onto the timeline, beat by beat.
 //   Video mode (?video): window.__story.renderAt(t) draws the frame at time t, for render_video.mjs.
-// The version (full or short) comes from ?v= or from <body data-version>. With ?video&voice the narration made by
-// scripts/make_voice.py sets the pace: beats stretch to fit their speech and the captions follow the spoken words.
+// The version (full or short) comes from ?v= or from <body data-version>.
 
 import { VERSIONS, ORDER, TITLE, SUBTITLE } from "./beats.js";
 import { MapView } from "./map.js";
@@ -19,22 +18,12 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // ------------------------------------------------------------------ timeline
 
-const VOICED = VIDEO && params.has("voice");
-const NARRATION = VOICED ? await loadJSON(`video/voice/${VERSION}.json`) : null;
-const VOICE_TAIL_S = 0.6; // silence after the narration before the next beat
-
-// Every beat in ORDER gets a slot; beats this version leaves out have zero length. A narrated beat is lengthened if
-// needed so that its speech, starting at voiceAt of the beat, ends VOICE_TAIL_S before the beat does.
+// Every beat in ORDER gets a slot; beats this version leaves out have zero length.
 const source = Object.fromEntries((VERSIONS[VERSION] || VERSIONS.full).map((b) => [b.id, b]));
 const beats = ORDER.map((id) => {
   const b = source[id];
   if (!b) return { id, dur: 0, caption: "", html: "" };
-  const dur = VIDEO && b.video === false ? 0 : b.dur;
-  const speech = NARRATION?.beats[id];
-  if (!speech || !dur) return { ...b, dur };
-  const f = b.voiceAt ?? 0.05;
-  const stretched = Math.max(dur, (speech.seconds + VOICE_TAIL_S) / (1 - f));
-  return { ...b, dur: stretched, speech, speechAt: f * stretched };
+  return { ...b, dur: VIDEO && b.video === false ? 0 : b.dur };
 });
 let acc = 0;
 const B = {};
@@ -225,12 +214,7 @@ class Story {
     S.map = map;
 
     // --- title cards
-    const introSpeech = beats.find((b) => b.id === "intro").speech;
-    const introFade = introSpeech
-      ? [(source.intro.voiceAt ?? 0.05) - 0.16, (source.intro.voiceAt ?? 0.05) - 0.03] // gone before the narration starts
-      : source.intro && source.intro.caption
-      ? [0.42, 0.58]
-      : [0.62, 0.85];
+    const introFade = source.intro && source.intro.caption ? [0.42, 0.58] : [0.62, 0.85];
     const titleIntro = VIDEO ? win(t, -1, 0, at("intro", introFade[0]), at("intro", introFade[1])) : 0;
     const titleEnd = win(t, at("end", 0.5), at("end", 0.7), T_END + 10, T_END + 11);
     S.titleAlpha = Math.max(titleIntro, titleEnd);
@@ -366,25 +350,8 @@ class Story {
       if (b.id === "end") a = win(t, at("end", 0.0), at("end", 0.1), at("end", 0.45), at("end", 0.55));
       if (b.id === "end" && t >= T_END) a = 0;
       S.caption = { text, alpha: text ? a : 0, slot };
-      if (VOICED) S.caption = this.spokenCaption(t, i, S.titleAlpha);
     }
     return S;
-  }
-
-  // The caption phrase being spoken at time t: it appears when it starts and holds until the next phrase (or the end
-  // of the beat), so the captions match the narration word for word. None while a title card is up.
-  spokenCaption(t, i, titleAlpha) {
-    const b = beats[i];
-    if (!b || !b.speech) return { text: "", alpha: 0, slot: 0 };
-    const t0 = B[b.id].t0 + b.speechAt;
-    const ph = b.speech.phrases;
-    let k = -1;
-    while (k + 1 < ph.length && t >= t0 + ph[k + 1].start - 0.05) k++;
-    if (k < 0) return { text: "", alpha: 0, slot: 0 };
-    const start = t0 + ph[k].start - 0.05;
-    const end = k + 1 < ph.length ? t0 + ph[k + 1].start - 0.05 : B[b.id].t0 + B[b.id].dur;
-    const alpha = win(t, start, start + 0.12, end - 0.12, end) * (1 - titleAlpha);
-    return { text: ph[k].text, alpha, slot: (i + k) % 2 };
   }
 
   draw(t) {
@@ -468,10 +435,6 @@ ready.catch((err) => {
 window.__story = {
   duration: T_END,
   version: VERSION,
-  // narration clips and where they start in the video, for render_video.mjs to mix
-  voiceClips: beats
-    .filter((b) => b.speech && b.dur > 0)
-    .map((b) => ({ file: b.speech.file, start: B[b.id].t0 + b.speechAt, seconds: b.speech.seconds })),
   ready: ready.then(() => true),
   renderAt: async (t) => {
     const story = await ready;

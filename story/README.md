@@ -42,29 +42,6 @@ node scripts/render_video.mjs --gpu --from 55 --to 75 --fps 10 --out video/previ
 node scripts/render_video.mjs --stills 5,25,60 --out video/stills
 ```
 
-## Add the narration
-
-The voiced videos (`video/phire_full_voice.mp4`, `video/phire_short_voice.mp4`) use Kokoro, an open-source
-text-to-speech model that runs on this machine. Set it up once, from `story/`:
-
-```bash
-/Users/jkingslake/miniconda3/envs/phire/bin/python -m venv .voice-venv
-.voice-venv/bin/pip install kokoro-onnx==0.4.9 soundfile==0.13.1
-mkdir -p .voice-models && cd .voice-models
-curl -LO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx
-curl -LO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin
-```
-
-Then `npm run voice` makes the speech and renders both voiced videos (about 5 minutes).
-
-- The narration is the `voice` text of each beat in `js/beats.js`. The captions show the same words, phrase by
-  phrase. A beat whose narration is longer than the beat is lengthened to fit, and its visuals stretch with it.
-- `scripts/make_voice.py` holds the voice (`VOICE`, British male `bm_george` by default), the speed, the spoken forms
-  of names and numbers (`PRONOUNCE`: PHIRE is said "Fire", Ronne "Ronnie", 550 "five hundred and fifty"), and phoneme
-  fixes (`PHONEME_FIXES`: crevasses stressed on the second syllable).
-- `.voice-venv/bin/python scripts/make_voice.py --audition` writes one line in four British voices to
-  `video/voice/audition/` for comparing them.
-
 ## Edit it
 
 - **Words**: `js/beats.js`, one list of beats per version. Each beat has a video duration, a short on-screen

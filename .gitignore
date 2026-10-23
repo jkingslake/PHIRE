@@ -189,6 +189,3 @@ cython_debug/
 # scroll story: npm packages and rendered videos (rebuild with `npm run video` in story/)
 story/node_modules/
 story/video/
-# narration: text-to-speech environment and model files (see story/README.md)
-story/.voice-venv/
-story/.voice-models/
