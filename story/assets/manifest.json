@@ -1,0 +1,81 @@
+{
+ "basemaps": [
+  {
+   "name": "base_ant",
+   "src": "assets/base_ant.webp",
+   "bounds": [
+    -2900,
+    -2500,
+    2900,
+    2500
+   ],
+   "res_km": 2.0
+  },
+  {
+   "name": "base_weddell",
+   "src": "assets/base_weddell.webp",
+   "bounds": [
+    -1800,
+    -300,
+    -100,
+    1300
+   ],
+   "res_km": 0.5
+  },
+  {
+   "name": "base_hir",
+   "src": "assets/base_hir.webp",
+   "bounds": [
+    -1110,
+    370,
+    -780,
+    610
+   ],
+   "res_km": 0.1
+  },
+  {
+   "name": "base_hen",
+   "src": "assets/base_hen.webp",
+   "bounds": [
+    -990,
+    515,
+    -915,
+    575
+   ],
+   "res_km": 0.025
+  },
+  {
+   "name": "wv_drill",
+   "src": "assets/wv_drill.webp",
+   "bounds": [
+    -956.791,
+    544.388,
+    -953.591,
+    547.5880000000001
+   ],
+   "res_km": 0.0016
+  },
+  {
+   "name": "wv_crev",
+   "src": "assets/wv_crev.webp",
+   "bounds": [
+    -951.6,
+    551.0,
+    -950.0,
+    552.6
+   ],
+   "res_km": 0.0008
+  }
+ ],
+ "speed": {
+  "name": "speed_weddell",
+  "src": "assets/speed_weddell.webp",
+  "bounds": [
+   -1800,
+   -300,
+   -100,
+   1300
+  ],
+  "res_km": 1.0
+ }
+}

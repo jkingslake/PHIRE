@@ -20,5 +20,7 @@ myst build --html
 
 Then open `_build/html/index.html`, or run `myst start` for a live-reloading dev server.
 
+The scroll story in [story/](story/README.md) is plain static HTML, not a MyST page. After `myst build`, both workflows copy it into `_build/html/story/` (without its `node_modules`, `video`, `scripts`, npm files, README and SCRIPT), so it is served at https://jkingslake.github.io/PHIRE/story/ and in each PR preview.
+
 **Notebooks are not re-run in CI.** They read local data (Quantarctica, DELORES radar files, WorldView imagery) that isn't in the repo, so the site shows the outputs saved in each `.ipynb`. Re-run a notebook locally and commit it to update what the site shows.
 

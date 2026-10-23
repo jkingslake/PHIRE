@@ -39,6 +39,12 @@ jobs:
           BASE_URL: /${{ github.event.repository.name }}
         run: myst build --html
 
+      - name: Add the scroll story
+        run: >-
+          rsync -a --exclude node_modules --exclude video --exclude scripts
+          --exclude 'package*.json' --exclude README.md --exclude SCRIPT.md
+          story/ _build/html/story/
+
       - name: Disable Jekyll processing
         run: touch _build/html/.nojekyll
 
