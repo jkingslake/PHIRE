@@ -4,9 +4,6 @@
 //   dur      seconds in the video (and the relative scroll length in the article)
 //   caption  the on-screen line in the video; keep it short enough to read in `dur`
 //   caption2 optional second line, shown from `split` (a fraction of the beat) to the end
-//   voice    narration for the voiced video, written for the ear; scripts/make_voice.py turns it into speech
-//            (spoken forms of numbers and names are in its PRONOUNCE table) and the captions show these words
-//   voiceAt  where in the beat the narration starts, as a fraction (default 0.05)
 //   html     the article text for the beat
 //   video    false to leave the beat out of the video (it stays in the article)
 //
@@ -29,8 +26,6 @@ const FULL = [
     id: "intro",
     dur: 5,
     caption: "Deep inside the Antarctic ice, our radar found something that shouldn't be there.",
-    voice: "Deep inside the Antarctic ice, our radar found something that shouldn't be there.",
-    voiceAt: 0.33,
     html: `<p>In January 2014 a small team towing an ice-penetrating radar across a remote dome of ice in the
       Weddell Sea saw something strange in the data: bright, steeply tilted echoes near the bottom of the ice,
       hundreds of metres beneath them.</p>
@@ -41,7 +36,6 @@ const FULL = [
     id: "icesheet",
     dur: 5,
     caption: "West Antarctica's ice holds metres of sea-level rise. Where it meets the sea, it floats.",
-    voice: "West Antarctica holds metres of sea-level rise. Where its ice meets the sea, it floats.",
     html: `<p>The West Antarctic Ice Sheet rests on a bed that lies mostly below sea level. Where its ice reaches
       the coast it lifts off the bed and floats, forming ice shelves. The <span class="key gl">grounding line</span>
       marks where the ice starts to float.</p>
@@ -52,7 +46,6 @@ const FULL = [
     id: "hir",
     dur: 5,
     caption: "In the middle of the floating Ronne Ice Shelf sits Henry Ice Rise: an island of ice frozen to the seabed.",
-    voice: "In the middle of the floating Ronne Ice Shelf sits Henry Ice Rise: an island of ice, frozen to the seabed.",
     html: `<p>Ice from the heart of West Antarctica drains into the Ronne Ice Shelf, which flows at hundreds of metres
       a year (<span class="key speed">colour</span> shows today's speed).</p>
       <p>In the middle of the shelf sits <strong>Henry Ice Rise</strong>: 7,000&nbsp;km² of ice resting on the
@@ -63,7 +56,6 @@ const FULL = [
     id: "season1",
     dur: 7,
     caption: "January 2014. We criss-crossed the ice rise with an ice-penetrating radar.",
-    voice: "In January 2014, we criss-crossed it with ice-penetrating radar.",
     html: `<p>In the 2013/14 field season we surveyed the ice rise with DELORES, the British Antarctic Survey's
       deep-looking radio-echo sounder. It sends radio pulses down through the ice and records echoes from layers
       of buried snow and from the bed below.</p>
@@ -73,7 +65,6 @@ const FULL = [
     id: "discovery",
     dur: 8,
     caption: "On the last day we pushed north. In the far corner, the deepest ice lit up with something strange.",
-    voice: "On the last day, we pushed north along the ridge. And in the far corner, the deepest ice lit up with something strange.",
     html: `<p>On 9 January, the last day of the survey, we extended it north along the ridge of the ice rise, 37&nbsp;km
       to its north-west corner. Most of that radargram is calm: layers of old snowfall, bent by the slow flow of the
       ice, above the bright echo of the bed.</p>
@@ -84,7 +75,6 @@ const FULL = [
     id: "mystery",
     dur: 4.5,
     caption: "They looked like crevasses. But crevasses don't form deep inside slow, frozen ice.",
-    voice: "They looked like crevasses. But crevasses don't form deep inside slow, frozen ice.",
     html: `<p>They looked like crevasses: cracks that open where ice is pulled apart, usually where it flows fast.</p>
       <p>Henry Ice Rise barely moves and is frozen to its bed. So what were crevasses doing hundreds of metres down
       inside it, and why only near the bottom, beneath smooth, unbroken layers?</p>`,
@@ -93,7 +83,6 @@ const FULL = [
     id: "season2",
     dur: 7,
     caption: "We came back the next summer to map that corner in detail.",
-    voice: "So the next summer, we came back to map that corner in detail.",
     html: `<p>That corner is why we came back. After finishing the 2013/14 survey, we returned the next summer and,
       over a week in December 2014, drove a dense <span class="key s2">grid of lines</span> a few hundred metres apart
       around it, at the northern end of the ice rise, where the bed is highest and the features come closest to the
@@ -103,7 +92,6 @@ const FULL = [
     id: "fl5",
     dur: 6.5,
     caption: "Steep reflectors that look like cracks, rising from the bed and capped by a smooth layer.",
-    voice: "We found steep reflectors that look like cracks, rising from the bed and capped by a smooth layer.",
     html: `<p>Processed to put each echo back where it came from, line FL5 (driven on 30 December) shows them clearly:
       steep reflectors that look like cracks, rising from the bed and stopping beneath a smooth layer.</p>`,
   },
@@ -121,7 +109,6 @@ const FULL = [
     id: "rumples",
     dur: 5,
     caption: "Cracks like these open today where floating ice runs aground.",
-    voice: "Cracks like these open today, where floating ice runs aground on the seabed.",
     html: `<p>We know where cracks like these form today. Where a floating ice shelf runs aground on a high in the seabed,
       it buckles and stretches and crevasses open, as they do at the nearby Doake Ice Rumples.</p>
       <p>This satellite image shows the same thing happening right now at the northern edge of Henry Ice Rise, a few
@@ -131,7 +118,6 @@ const FULL = [
     id: "hypothesis",
     dur: 4,
     caption: "Was Henry Ice Rise once afloat?",
-    voice: "So, was Henry Ice Rise once afloat?",
     html: `<p>That suggests an explanation. Perhaps Henry Ice Rise was once part of the floating ice shelf. When the shelf
       ran aground on the seabed high beneath its northern end, it cracked like Doake Ice Rumples does today. Sea water
       filled the cracks and froze. The ice thickened, stopped flowing, froze to its bed, and centuries of snowfall
@@ -142,7 +128,6 @@ const FULL = [
     id: "model",
     dur: 10,
     caption: "In a model, the ice retreats and Henry Ice Rise floats off. Then the rising seabed lets the ice run aground and grow back.",
-    voice: "In a model, the ice retreats and Henry Ice Rise floats off. Then the land rebounds, the seabed rises, and the ice runs aground and grows back.",
     html: `<p>We explored this with an ice-sheet model (PISM; Kingslake et al., 2018). As the climate warms after the last
       ice age, the <span class="key model">modelled grounding line</span> retreats inland of its
       <span class="key gl">present position</span>, by up to 300&nbsp;km in places. In the Weddell Sea it is furthest
@@ -155,7 +140,6 @@ const FULL = [
     id: "stakes",
     dur: 4.5,
     caption: "If that happened, the solid Earth can stop and reverse ice-sheet retreat.",
-    voice: "If that happened, the solid Earth can stop, and even reverse, ice-sheet retreat.",
     html: `<p>Two histories fit what we know. In one, the ice sheet shrank steadily to its present size and Henry Ice Rise
       simply slowed down. In the other, the ice sheet retreated much further and then <strong>re-advanced</strong>.</p>
       <p>The difference matters for the future. If rebound of the solid Earth halted the retreat, similar processes might
@@ -166,7 +150,6 @@ const FULL = [
     id: "drillsite",
     dur: 6,
     caption: "PHIRE will drill here.",
-    voice: "That's why PHIRE will drill here.",
     html: `<p>So we are going to look. The PHIRE drill site is on line FL5 at the northern end of Henry Ice Rise
       (79.90°&nbsp;S, 60.25°&nbsp;W), close to the corner where we first saw the buried crevasses, and above the
       shallowest of them.</p>`,
@@ -175,7 +158,6 @@ const FULL = [
     id: "block",
     dur: 12,
     caption: "A hot-water drill will melt a hole through 550 m of ice to the bed, straight through the buried crevasses.",
-    voice: "A hot-water drill will melt a hole through 550 metres of ice, straight through the buried crevasses, to the bed. There, we'll sample the sediment beneath the ice.",
     caption2: "At the bed, a corer will sample the sediment beneath the ice.",
     split: 0.72,
     html: `<p>In the 2028/29 season a hot-water drill will melt a hole through the full 550&nbsp;m of ice to the bed,
@@ -188,7 +170,6 @@ const FULL = [
     id: "temperature",
     dur: 6.5,
     caption: "Frozen sea water in the cracks would show it was afloat. The ice's temperature and the sediment will show when.",
-    voice: "Frozen sea water in the cracks would show it was once afloat. The ice's temperature, and the sediment, will tell us when.",
     html: `<p>A fibre-optic cable left in the hole will measure the temperature of the ice from top to bottom. When floating
       ice runs aground, the ocean stops warming its base and the ice cools from the bottom up, over thousands of years.
       The profile measured today still carries the signature of when that happened. With the sediment beneath, it will
@@ -200,8 +181,6 @@ const FULL = [
     id: "end",
     dur: 5,
     caption: "PHIRE: the POLAR Henry Ice Rise Expedition.",
-    voice: "PHIRE: the POLAR Henry Ice Rise Expedition.",
-    voiceAt: 0.3,
     html: `<p>Frozen sea water in the crevasses would show that Henry Ice Rise was once afloat, and that the ice sheet
       retreated past it and grew back. The temperature of the ice and the sediment beneath it will tell us when, and help
       pin down why.</p>`,
@@ -214,7 +193,6 @@ const SHORT = [
     id: "hir",
     dur: 6,
     caption: "Henry Ice Rise: an island of ice frozen to the seabed, in the floating Ronne Ice Shelf.",
-    voice: "Henry Ice Rise: an island of ice frozen to the seabed, in the floating Ronne Ice Shelf.",
     html: `<p><strong>Henry Ice Rise</strong> is 7,000&nbsp;km² of ice resting on the seabed in the middle of the floating
       Ronne Ice Shelf, West Antarctica. The <span class="key gl">grounding line</span> marks where the ice around it
       starts to float.</p>`,
@@ -223,7 +201,6 @@ const SHORT = [
     id: "season1",
     dur: 6,
     caption: "2013/14: we surveyed it with ice-penetrating radar.",
-    voice: "In January 2014, we surveyed it with ice-penetrating radar.",
     html: `<p>In the 2013/14 field season we criss-crossed the ice rise with an ice-penetrating radar. The
       <span class="key s1">lines</span> appear in the order we drove them.</p>`,
   },
@@ -231,7 +208,6 @@ const SHORT = [
     id: "discovery",
     dur: 8,
     caption: "On the last day, in the far corner, the deepest ice lit up with something strange.",
-    voice: "On the last day, in the far corner, the deepest ice lit up with something strange.",
     html: `<p>On the last day we extended the survey north, 37&nbsp;km along the ridge to the north-west corner. In the last
       5&nbsp;km the deepest ice filled with bright, steeply tilted echoes, rising from the bed.</p>`,
   },
@@ -239,7 +215,6 @@ const SHORT = [
     id: "season2",
     dur: 6.5,
     caption: "2014/15: we came back to map that corner in detail.",
-    voice: "The next summer, we came back to map that corner in detail.",
     html: `<p>The next summer we came back and drove a dense <span class="key s2">grid of lines</span> around that
       corner.</p>`,
   },
@@ -247,7 +222,6 @@ const SHORT = [
     id: "fl5",
     dur: 6.5,
     caption: "Steep reflectors that look like cracks, rising from the bed and capped by smooth layers.",
-    voice: "We found steep reflectors that look like cracks, rising from the bed and capped by smooth layers.",
     html: `<p>The detailed survey shows them clearly: steep reflectors that look like cracks, rising from the bed and
       stopping beneath smooth layers. We think they are crevasses that formed when the ice rise was afloat, filled with sea water
       that froze.</p>`,
@@ -256,14 +230,12 @@ const SHORT = [
     id: "drillsite",
     dur: 4.5,
     caption: "PHIRE will drill here.",
-    voice: "PHIRE will drill here.",
     html: `<p>The PHIRE drill site is on line FL5, close to the corner where we first saw them.</p>`,
   },
   {
     id: "block",
     dur: 13,
     caption: "A hot-water drill will melt a hole through 550 m of ice to the bed, straight through the buried crevasses.",
-    voice: "A hot-water drill will melt a hole through 550 metres of ice to the bed, straight through the buried crevasses. Frozen sea water in the cracks would show it was once afloat. The sediment will tell us when.",
     caption2: "Frozen sea water in the cracks would show it was afloat. The sediment at the bed will show when.",
     split: 0.72,
     html: `<p>A hot-water drill will melt a hole through the full 550&nbsp;m of ice to the bed, through the buried crevasses
@@ -274,8 +246,6 @@ const SHORT = [
     id: "end",
     dur: 4.5,
     caption: "PHIRE: the POLAR Henry Ice Rise Expedition.",
-    voice: "PHIRE: the POLAR Henry Ice Rise Expedition.",
-    voiceAt: 0.3,
     html: "",
   },
 ];
