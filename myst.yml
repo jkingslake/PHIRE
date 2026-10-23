@@ -4,6 +4,8 @@ project:
   github: https://github.com/jkingslake/PHIRE
   toc:
     - file: index.md
+    - title: "The story: buried crevasses"
+      url: https://jkingslake.github.io/PHIRE/story/
     - title: Preliminary planning
       children:
         - file: preliminary-planning/mapping-henry-ice-rise.ipynb
